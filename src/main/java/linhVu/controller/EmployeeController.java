@@ -85,7 +85,7 @@ public class EmployeeController {
             ModelAndView modelAndView= new ModelAndView("employee/edit");
             return modelAndView;
         }
-        employeeService.update(employeeForm.getId(),employeeForm,result);
+        employeeService.save(employeeForm,result);
         ModelAndView modelAndView = new ModelAndView("employee/edit");
         modelAndView.addObject("employee", employeeForm);
         modelAndView.addObject("success", "Updated employee successfully!");

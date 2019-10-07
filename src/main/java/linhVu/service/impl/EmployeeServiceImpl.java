@@ -6,6 +6,7 @@ import linhVu.model.EmployeeForm;
 import linhVu.repository.EmployeeRepository;
 import linhVu.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,9 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
-
+@PropertySource("classpath:global_config_app.properties")
 public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     Environment env;
@@ -54,39 +54,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void save(EmployeeForm employeeForm, BindingResult result) {
-        String fileName = uploadFile(employeeForm, result);
-        if (employeeForm.getId() == null) {
-            Employee employeeObject = new Employee(employeeForm.getName(), employeeForm.getBirthDate(),
-                    employeeForm.getAddress(), fileName, employeeForm.getSalary(), employeeForm.getDepartment());
-            employeeRepository.save(employeeObject);
-        }
-    }
+    public void save(EmployeeForm employeeForm) {
+        Employee employeeObject = getEmployee(employeeForm);
+        employeeRepository.save(employeeObject);
 
+    }
 
     @Override
-    public void update(Long id, EmployeeForm employeeForm, BindingResult result) {
-        String fileName = uploadFile(employeeForm, result);
-
-        if (employeeForm.getId() != null) {
-            Employee employeeObject = findById(employeeForm.getId());
-            if(fileName.equals(""))
-            fileName = employeeObject.getAvatar();
-            employeeObject = new Employee(employeeForm.getId(), employeeForm.getName(), employeeForm.getBirthDate(), employeeForm.getAddress(), fileName, employeeForm.getSalary(), employeeForm.getDepartment());
-            employeeRepository.save(employeeObject);
-        }
-
-    }
-
-    public String uploadFile(EmployeeForm employeeForm, BindingResult result) {
-        // thong bao neu xay ra loi
-        if (result.hasErrors()) {
-            System.out.println("Result Error Occured" + result.getAllErrors());
-        }
-        //luu file len server
+    public Employee getEmployee(EmployeeForm employeeForm) {
+        //lay ten file
         MultipartFile multipartFile = employeeForm.getAvatar();
         String fileName = multipartFile.getOriginalFilename();
-        String fileUpload = env.getProperty("file_upload");
+        String fileUpload = env.getProperty("file_upload").toString();
 
         // luu file len server
 
@@ -96,7 +75,19 @@ public class EmployeeServiceImpl implements EmployeeService {
             e.printStackTrace();
         }
 
-        return fileName;
+
+        if (employeeForm.getId() != null) {
+            Employee employeeObject = findById(employeeForm.getId());
+            if (fileName.equals(""))
+                fileName = employeeObject.getAvatar();
+        }
+        if (employeeForm.getId() == null) {
+            return new Employee(employeeForm.getName(), employeeForm.getBirthDate(),
+                    employeeForm.getAddress(), fileName, employeeForm.getSalary(), employeeForm.getDepartment());
+        } else {
+            return new Employee(employeeForm.getId(), employeeForm.getName(), employeeForm.getBirthDate(),
+                    employeeForm.getAddress(), fileName, employeeForm.getSalary(), employeeForm.getDepartment());
+        }
     }
 
 
