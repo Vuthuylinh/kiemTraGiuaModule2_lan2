@@ -34,7 +34,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/employees")
-    public ModelAndView listEmployees(@RequestParam("searchName") Optional<String> name, @PageableDefault(value =10) Pageable pageable){
+    public ModelAndView listEmployees(@RequestParam("searchName") Optional<String> name, @PageableDefault(value =6) Pageable pageable){
         Page<Employee> employees;
         if(name.isPresent()){
             employees= employeeService.findAllByNameContaining(name.get(),pageable);

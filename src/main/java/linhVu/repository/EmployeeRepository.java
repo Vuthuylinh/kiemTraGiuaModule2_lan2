@@ -17,7 +17,7 @@ Iterable<Employee> findAllByDepartment(Department department);
 Page<Employee> findAllByNameContaining(String name, Pageable pageable);
 
 @Query("SELECT e FROM Employee e ORDER BY e.salary DESC")
-Page<Employee> sort(Pageable pageable);
+  Page<Employee> sort(Pageable pageable);
 
 
 
