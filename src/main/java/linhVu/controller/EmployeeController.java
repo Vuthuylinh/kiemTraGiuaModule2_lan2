@@ -72,7 +72,7 @@ public class EmployeeController {
 
     @GetMapping("/edit-employee/{id}")
     public String editEmployeeForm(@PathVariable Long id, Model model){
-        model.addAttribute("employee", employeeService.findById(id));
+        model.addAttribute("employeeForm", employeeService.findById(id));
         return "employee/edit";
     }
 
@@ -80,14 +80,15 @@ public class EmployeeController {
     public ModelAndView updateEmployee(@Validated @ModelAttribute EmployeeForm employeeForm, BindingResult result) {
 
         // thong bao neu xay ra loi
-        if (result.hasErrors()) {
+        if (result.hasFieldErrors()) {
             System.out.println("Result Error Occured" + result.getAllErrors());
             ModelAndView modelAndView= new ModelAndView("employee/edit");
+            modelAndView.addObject("employeeForm", employeeForm);
             return modelAndView;
         }
         employeeService.save(employeeForm);
         ModelAndView modelAndView = new ModelAndView("employee/edit");
-        modelAndView.addObject("employee", employeeForm);
+        modelAndView.addObject("employeeForm", employeeForm);
         modelAndView.addObject("success", "Updated employee successfully!");
         return modelAndView;
     }
