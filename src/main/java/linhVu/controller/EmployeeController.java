@@ -62,7 +62,7 @@ public class EmployeeController {
             return modelAndView;
         }
 
-        employeeService.save(employeeForm,result);
+        employeeService.save(employeeForm);
 
         ModelAndView modelAndView = new ModelAndView("/employee/create");
         modelAndView.addObject("employeeForm", new EmployeeForm());
@@ -85,7 +85,7 @@ public class EmployeeController {
             ModelAndView modelAndView= new ModelAndView("employee/edit");
             return modelAndView;
         }
-        employeeService.save(employeeForm,result);
+        employeeService.save(employeeForm);
         ModelAndView modelAndView = new ModelAndView("employee/edit");
         modelAndView.addObject("employee", employeeForm);
         modelAndView.addObject("success", "Updated employee successfully!");
@@ -109,5 +109,17 @@ public class EmployeeController {
     public String deleteEmployee(@ModelAttribute("employee") Employee employee){
        employeeService.remove(employee.getId());
        return "redirect:/employees";
+    }
+    @GetMapping("view-employee/{id}")
+    public ModelAndView viewEmployeeForm(@PathVariable Long id, Model model){
+        Employee employee = employeeService.findById(id);
+        if(employee!=null){
+            ModelAndView modelAndView = new ModelAndView("employee/view");
+            modelAndView.addObject("employee", employee);
+            return modelAndView;
+        }else{
+            ModelAndView modelAndView = new ModelAndView("error-404");
+            return modelAndView;
+        }
     }
 }
